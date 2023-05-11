@@ -8,18 +8,21 @@ const email = ref('');
 const password = ref('');
 const errors = ref([]);
 
-const submit = async () => {
-    try {
-        const response = await axios.post('z1.0/login', {
-            email: email.value,
-            password: password.value,
-        });
-        const token = response.data.payload.token;
-        localStorage.setItem('nz-token', token);
-        router.push('/enterprises');
-    } catch (error) {
+const submit = () => {
+    axios.post('z1.0/login', {
+        email: email.value,
+        password: password.value,
+    }).then(response => {
+        let rData = response.data;
+        if(rData.success) {
+            localStorage.setItem('nz-token', rData.payload.token);
+            router.push('/enterprises');
+        } else {
+            alert('Could not load: ' + rData.err_message)
+        }
+    }).catch(error => {
         console.error(error);
-    }
+    });
 };
 </script>
 
