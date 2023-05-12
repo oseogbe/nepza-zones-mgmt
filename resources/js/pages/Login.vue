@@ -1,28 +1,33 @@
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, reactive } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
+const route = useRoute();
 const router = useRouter();
 
-const email = ref('');
-const password = ref('');
+const form = reactive({
+    email: "",
+    password: "",
+});
+
 const errors = ref([]);
 
 const submit = () => {
-    axios.post('z1.0/login', {
-        email: email.value,
-        password: password.value,
-    }).then(response => {
-        let rData = response.data;
-        if(rData.success) {
-            localStorage.setItem('nz-token', rData.payload.token);
-            router.push('/enterprises');
-        } else {
-            alert('Could not load: ' + rData.err_message)
-        }
-    }).catch(error => {
-        console.error(error);
-    });
+    axios
+        .post("/login", form)
+        .then((response) => {
+            let rData = response.data;
+            if (rData.success) {
+                localStorage.setItem("nz-token", rData.payload.token);
+                const redirectPath = route.query.redirect || { name: "enterprises" };
+                router.push(redirectPath);
+            } else {
+                console.log(rData.err_message);
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
 };
 </script>
 
@@ -35,10 +40,12 @@ const submit = () => {
                 <div
                     class="md:col-span-2 flex flex-col justify-center px-6 py-8 md:px-12 leading-[1.2]"
                 >
-                    <h1 class="text-primary text-2xl md:text-4xl">
-                        Zone User
-                    </h1>
-                    <form class="pt-8" @submit.prevent="submit">
+                    <h1 class="text-primary text-2xl md:text-4xl">Zone User</h1>
+                    <form
+                        class="pt-8"
+                        @submit.prevent="submit"
+                        autocomplete="off"
+                    >
                         <div>
                             <input-label for="email" value="Email" />
 
@@ -46,13 +53,13 @@ const submit = () => {
                                 id="email"
                                 type="text"
                                 class="mt-1 block w-full"
-                                v-model="email"
+                                v-model="form.email"
                                 required
-                                autocomplete="username"
                             />
 
                             <input-error
                                 class="mt-2"
+                                v-if="errors.email"
                                 :message="errors.email"
                             />
                         </div>
@@ -64,13 +71,13 @@ const submit = () => {
                                 id="password"
                                 type="password"
                                 class="mt-1 block w-full"
-                                v-model="password"
+                                v-model="form.password"
                                 required
-                                autocomplete="current-password"
                             />
 
                             <input-error
                                 class="mt-2"
+                                v-if="errors.password"
                                 :message="errors.password"
                             />
                         </div>

@@ -1,37 +1,68 @@
-import { createRouter, createWebHistory } from "vue-router"
+import { createRouter, createWebHistory } from "vue-router";
+import useUser from "@/composables/user";
 
 const routes = [
     {
-        path: '/',
-        name: 'login',
-        component: () => import('@/pages/Login.vue'),
-    },
-    {
-        path: '/enterprises',
-        name: 'enterprises',
-        component: () => import('@/pages/Enterprise/Index.vue'),
+        path: "/",
+        name: "login",
+        component: () => import("@/pages/Login.vue"),
         meta: {
-            requiresAuth: true
-        }
+            guestOnly: true,
+        },
     },
     {
-        path: '/enterprises/create',
-        name: 'enterprise.add',
-        component: () => import('@/pages/Enterprise/Create.vue'),
+        path: "/enterprises",
+        name: "enterprises",
+        component: () => import("@/pages/Enterprise/Index.vue"),
         meta: {
-            requiresAuth: true
-        }
+            authOnly: true,
+        },
     },
     {
-        path: '/:pathMatch(.*)*',
-        name: 'NotFound',
-        component: () => import('@/pages/NotFound.vue')
-    }
-]
+        path: "/enterprises/create",
+        name: "enterprise.add",
+        component: () => import("@/pages/Enterprise/Create.vue"),
+        meta: {
+            authOnly: true,
+        },
+    },
+    {
+        path: "/:pathMatch(.*)*",
+        name: "NotFound",
+        component: () => import("@/pages/NotFound.vue"),
+    },
+];
 
 const router = createRouter({
     history: createWebHistory(),
-    routes
-})
+    routes,
+});
 
-export default router
+router.beforeEach(async (to, from, next) => {
+    const { initUser, user } = useUser();
+    await initUser();
+
+    if (to.matched.some((record) => record.meta.authOnly)) {
+        if (!user.value) {
+            next({
+                name: "login",
+                query: { redirect: to.fullPath },
+            });
+        } else {
+            next();
+        }
+    } else if (to.matched.some((record) => record.meta.guestOnly)) {
+        if (user.value) {
+            next({
+                name: "enterprises",
+                query: { redirect: to.fullPath },
+            });
+        } else {
+            next();
+        }
+    } else {
+        next();
+    }
+});
+
+export default router;
