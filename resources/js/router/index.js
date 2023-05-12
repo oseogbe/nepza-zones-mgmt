@@ -27,6 +27,14 @@ const routes = [
         },
     },
     {
+        path: "/enterprises/:id",
+        name: "enterprise",
+        component: () => import("@/pages/Enterprise/Single.vue"),
+        meta: {
+            authOnly: true,
+        },
+    },
+    {
         path: "/:pathMatch(.*)*",
         name: "NotFound",
         component: () => import("@/pages/NotFound.vue"),

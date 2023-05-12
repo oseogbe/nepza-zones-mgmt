@@ -1,3 +1,8 @@
+<script setup>
+import useUser from '@/composables/user';
+const { user } = useUser();
+</script>
+
 <template>
     <div class="container mx-auto selection:bg-primary/40">
         <header
@@ -12,9 +17,9 @@
                         <router-link
                             class="flex-none text-3xl lg:text-4xl font-semibold dark:text-white"
                             to="/"
-                            ><h1 class="text-primary uppercase">Nepza</h1>
+                            ><h1 class="-m-[2px] text-primary uppercase">Nepza</h1>
                         </router-link>
-                        <p class="pl-1">Zone Management</p>
+                        <p>Zone Management</p>
                     </div>
                     <div class="sm:hidden">
                         <button
@@ -58,10 +63,9 @@
                                 <span class="inline-flex rounded-md">
                                     <button
                                         type="button"
-                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                        class="inline-flex items-center border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                     >
-                                        Steph James
-                                        <!-- {{ $page.props.auth.user.name }} -->
+                                        {{ user.user.name }}
                                         <svg
                                             class="ml-2 -mr-0.5 h-4 w-4"
                                             xmlns="http://www.w3.org/2000/svg"

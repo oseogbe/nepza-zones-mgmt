@@ -1,19 +1,53 @@
 <script setup>
-import { ref } from "vue";
+import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
+import useAxios from "@/composables/axios";
 
-const first_name = ref("");
-const last_name = ref("");
-const email = ref("");
-const phone = ref("");
-const company_name = ref("");
-const company_email = ref("");
+const router = useRouter();
+
+const form = reactive({
+    p10020: "",
+    p10021: "",
+    p10023: "",
+    p10022: "",
+    p10010: "",
+    p10011: "",
+    p10030: "NG",
+});
+
 const loading = ref(false);
 const errors = ref([]);
 
 const selectedCountryCode = ref("+234");
 
-const submit = () => {
-    // phone.value: `${selectedCountryCode.value} ${data.phone}`
+const countries = ref([]);
+
+const { state, request } = useAxios();
+
+const getCountries = async () => {
+    await request("get", "/get_countries");
+    return state.data;
+};
+
+getCountries()
+    .then((data) => {
+        countries.value = data.payload.countries;
+    })
+    .catch((err) => console.error(err));
+
+const submit = async () => {
+    loading.value = true;
+    const enterprise = {
+        ...form,
+        p10022: `${selectedCountryCode.value} ${form.p10022}`,
+    };
+    await request("post", "/enterprises/new", enterprise);
+    router.push({
+        name: "enterprise",
+        params: {
+            id: state.data.payload.ident,
+        },
+    });
 };
 </script>
 
@@ -43,14 +77,11 @@ const submit = () => {
                             id="firstname"
                             type="text"
                             class="mt-1 block w-full"
-                            v-model="first_name"
+                            v-model="form.p10020"
                             required
                         />
 
-                        <input-error
-                            class="mt-2"
-                            :message="errors.first_name"
-                        />
+                        <input-error class="mt-2" :message="errors.p10020" />
                     </div>
 
                     <div class="mt-4">
@@ -60,14 +91,11 @@ const submit = () => {
                             id="lastname"
                             type="text"
                             class="mt-1 block w-full"
-                            v-model="last_name"
+                            v-model="form.p10021"
                             required
                         />
 
-                        <input-error
-                            class="mt-2"
-                            :message="errors.last_name"
-                        />
+                        <input-error class="mt-2" :message="errors.p10021" />
                     </div>
 
                     <div class="mt-4">
@@ -77,14 +105,11 @@ const submit = () => {
                             id="email"
                             type="email"
                             class="mt-1 block w-full"
-                            v-model="email"
+                            v-model="form.p10023"
                             required
                         />
 
-                        <input-error
-                            class="mt-2"
-                            :message="errors.email"
-                        />
+                        <input-error class="mt-2" :message="errors.p10023" />
                     </div>
 
                     <div class="mt-4">
@@ -94,8 +119,8 @@ const submit = () => {
                             <input
                                 type="text"
                                 id="phone"
-                                class="py-3 px-4 pl-20 block w-full shadow-sm rounded-md text-sm focus:z-10 border-primary focus:border-primary focus:ring-primary/70"
-                                v-model="phone"
+                                class="py-3 px-4 pl-20 block w-full shadow-sm rounded-md text-sm text-gray-600 focus:z-10 border-primary focus:border-primary focus:ring-primary/70"
+                                v-model="form.p10022"
                                 placeholder="(800) 000-0000"
                                 required
                             />
@@ -113,19 +138,14 @@ const submit = () => {
                                     class="block w-full border-transparent rounded-md focus:ring-0 focus:border-none"
                                     v-model="selectedCountryCode"
                                 >
-                                    <option value="+234" selected>
-                                        NG
-                                    </option>
+                                    <option value="+234" selected>NG</option>
                                     <option value="+1">US</option>
                                     <option value="+44">UK</option>
                                 </select>
                             </div>
                         </div>
 
-                        <input-error
-                            class="mt-2"
-                            :message="errors.phone"
-                        />
+                        <input-error class="mt-2" :message="errors.p10022" />
                     </div>
 
                     <div class="mt-4">
@@ -138,14 +158,11 @@ const submit = () => {
                             id="company_name"
                             type="text"
                             class="mt-1 block w-full"
-                            v-model="company_name"
+                            v-model="form.p10010"
                             required
                         />
 
-                        <input-error
-                            class="mt-2"
-                            :message="errors.company_name"
-                        />
+                        <input-error class="mt-2" :message="errors.p10010" />
                     </div>
 
                     <div class="mt-4">
@@ -158,14 +175,11 @@ const submit = () => {
                             id="company_email"
                             type="text"
                             class="mt-1 block w-full"
-                            v-model="company_email"
+                            v-model="form.p10011"
                             required
                         />
 
-                        <input-error
-                            class="mt-2"
-                            :message="errors.company_email"
-                        />
+                        <input-error class="mt-2" :message="errors.p10011" />
                     </div>
 
                     <div class="mt-4">
@@ -174,23 +188,26 @@ const submit = () => {
                             value="Enterprise Country"
                         />
 
-                        <text-input
+                        <select
                             id="company_country"
-                            type="text"
-                            class="mt-1 block w-full"
-                            v-model="company_country"
+                            class="mt-1 block w-full text-gray-600 border-primary focus:border-primary focus:ring-primary/70 rounded-md shadow-sm"
+                            v-model="form.p10030"
                             required
-                        />
+                        >
+                            <option
+                                v-for="country in countries"
+                                :value="country.code"
+                            >
+                                {{ country.name }}
+                            </option>
+                        </select>
 
-                        <input-error
-                            class="mt-2"
-                            :message="errors.company_country"
-                        />
+                        <input-error class="mt-2" :message="errors.p10030" />
                     </div>
 
                     <div class="flex items-center mt-6">
                         <PrimaryButton
-                            :class="{ 'opacity-25': loading }"
+                            :class="{ 'opacity-75': loading }"
                             :disabled="loading"
                         >
                             Submit
@@ -202,6 +219,4 @@ const submit = () => {
     </auth-layout>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style scoped></style>

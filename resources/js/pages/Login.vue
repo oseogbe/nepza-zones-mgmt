@@ -88,11 +88,15 @@ const submit = () => {
                     </form>
                 </div>
                 <div
-                    class="hidden md:block md:col-span-3 h-[500px] bg-[url('/complex.jpg')] bg-center bg-[length:125%]"
+                    class="login-img hidden md:block md:col-span-3 h-[500px] bg-center bg-[length:125%]"
                 ></div>
             </div>
         </div>
     </guest-layout>
 </template>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.login-img {
+    background-image: url('/complex.jpg');
+}
+</style>
