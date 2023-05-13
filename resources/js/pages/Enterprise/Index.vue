@@ -129,7 +129,7 @@ const declineEnterprise = () => {};
                         type="text"
                         v-model="search"
                         placeholder="Search"
-                        class="block w-full py-1.5 pr-5 text-gray-600 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 focus:border-none focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                        class="block w-full py-1.5 pr-5 text-gray-500 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 focus:border-none focus:ring-gray-300 focus:outline-none focus:ring focus:ring-opacity-40"
                     />
                 </div>
             </div>
@@ -239,11 +239,17 @@ const declineEnterprise = () => {};
                                         <td
                                             class="px-4 py-4 text-sm font-medium whitespace-nowrap"
                                         >
-                                            <div>
+                                            <div class="hs-tooltip inline-block [--placement:right] ">
                                                 <h2
-                                                    class="font-medium text-gray-800 dark:text-white"
+                                                    class="hs-tooltip-toggle font-medium text-gray-800 dark:text-white"
                                                 >
                                                     {{ enterprise.name }}
+                                                    <span
+                                                        class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
+                                                        role="tooltip"
+                                                    >
+                                                        {{ enterprise.name_approved ? 'Approved'  : 'Not Approved'}}
+                                                    </span>
                                                 </h2>
                                                 <p
                                                     class="text-sm font-normal text-gray-600 dark:text-gray-400"
@@ -337,7 +343,7 @@ const declineEnterprise = () => {};
                                                         name: 'enterprise',
                                                         params: {
                                                             id: enterprise.ident,
-                                                        }
+                                                        },
                                                     })
                                                 "
                                                 class="text-gray-500 cursor-pointer text-lg"
