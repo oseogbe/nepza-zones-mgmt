@@ -10,9 +10,9 @@ import('preline');
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faEye, faBackward } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faPlus)
+library.add(faPlus, faEye, faBackward)
 
 const app = createApp(App)
 

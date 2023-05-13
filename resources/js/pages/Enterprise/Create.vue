@@ -53,6 +53,15 @@ const submit = async () => {
 
 <template>
     <auth-layout>
+        <div class="mb-8">
+            <router-link
+                :to="{ name: 'enterprises' }"
+                class="text-sm text-gray-600 px-4 py-2 border border-gray-500 bg-gray-100 rounded-md"
+            >
+                <font-awesome-icon icon="fa-solid fa-backward" class="text-gray-500" />
+                Back
+            </router-link>
+        </div>
         <div class="space-y-6">
             <div>
                 <div class="flex items-center gap-x-3">

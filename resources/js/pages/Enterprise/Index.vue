@@ -20,7 +20,6 @@ getEnterprises()
     .then((data) => {
         enterprises.value = data.payload.enterprises;
         enterprises_count.value = data.payload.meta.enterprise_count;
-        console.log(enterprises.value);
     })
     .catch((err) => console.error(err));
 
@@ -72,7 +71,7 @@ const declineEnterprise = () => {};
             </div>
 
             <div class="mt-6 md:flex md:items-center md:justify-between">
-                <div
+                <!-- <div
                     class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700"
                 >
                     <button
@@ -106,7 +105,7 @@ const declineEnterprise = () => {};
                     >
                         Declined
                     </button>
-                </div>
+                </div> -->
 
                 <div class="relative flex items-center mt-4 md:mt-0">
                     <span class="absolute">
@@ -244,16 +243,12 @@ const declineEnterprise = () => {};
                                                 <h2
                                                     class="font-medium text-gray-800 dark:text-white"
                                                 >
-                                                    {{
-                                                        enterprise.name
-                                                    }}
+                                                    {{ enterprise.name }}
                                                 </h2>
                                                 <p
                                                     class="text-sm font-normal text-gray-600 dark:text-gray-400"
                                                 >
-                                                    {{
-                                                        enterprise.email
-                                                    }}
+                                                    {{ enterprise.email }}
                                                 </p>
                                             </div>
                                         </td>
@@ -275,7 +270,9 @@ const declineEnterprise = () => {};
                                                 <p
                                                     class="text-gray-500 dark:text-gray-400"
                                                 >
-                                                    {{ enterprise.promoter.name }}
+                                                    {{
+                                                        enterprise.promoter.name
+                                                    }}
                                                 </p>
                                             </div>
                                         </td>
@@ -286,7 +283,10 @@ const declineEnterprise = () => {};
                                                 <p
                                                     class="text-gray-500 dark:text-gray-400"
                                                 >
-                                                    {{ enterprise.promoter.email }}
+                                                    {{
+                                                        enterprise.promoter
+                                                            .email
+                                                    }}
                                                 </p>
                                             </div>
                                         </td>
@@ -298,7 +298,10 @@ const declineEnterprise = () => {};
                                                 <p
                                                     class="text-gray-500 dark:text-gray-400"
                                                 >
-                                                    {{ enterprise.promoter.phone }}
+                                                    {{
+                                                        enterprise.promoter
+                                                            .phone
+                                                    }}
                                                 </p>
                                             </div>
                                         </td>
@@ -312,12 +315,16 @@ const declineEnterprise = () => {};
                                                         enterprise.kyc_completed ===
                                                         true,
                                                     'text-red-500 gap-x-2 bg-red-100/60':
-                                                    enterprise.kyc_completed ===
+                                                        enterprise.kyc_completed ===
                                                         false,
                                                 }"
                                                 class="inline px-3 py-1 text-sm font-normal rounded-full"
                                             >
-                                                {{ enterprise.kyc_completed ? 'Completed' : 'Not Completed' }}
+                                                {{
+                                                    enterprise.kyc_completed
+                                                        ? "Completed"
+                                                        : "Pending"
+                                                }}
                                             </div>
                                         </td>
 
@@ -325,63 +332,19 @@ const declineEnterprise = () => {};
                                             class="px-4 py-4 text-sm whitespace-nowrap"
                                         >
                                             <div
-                                                class="hs-tooltip inline-block [--trigger:click] [--placement:bottom]"
+                                                @click="
+                                                    $router.push({
+                                                        name: 'enterprise',
+                                                        params: {
+                                                            id: enterprise.ident,
+                                                        }
+                                                    })
+                                                "
+                                                class="text-gray-500 cursor-pointer text-lg"
                                             >
-                                                <div
-                                                    class="hs-tooltip-toggle px-1 py-1 block text-center transition-colors duration-200 rounded-lg hover:bg-gray-100"
-                                                >
-                                                    <span>
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            stroke-width="1.5"
-                                                            stroke="currentColor"
-                                                            class="w-6 h-6"
-                                                        >
-                                                            <path
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                    <div
-                                                        class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 bg-white border text-sm text-gray-600 rounded-md shadow-md dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400"
-                                                        role="tooltip"
-                                                    >
-                                                        <button
-                                                            @click="
-                                                                approveEnterprise(
-                                                                    enterprise.id
-                                                                )
-                                                            "
-                                                            type="button"
-                                                            class="block py-3 px-4 text-green-500 hover:bg-gray-100"
-                                                            :disabled="
-                                                                enterprise.status !==
-                                                                'Pending'
-                                                            "
-                                                        >
-                                                            Approve
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            class="block py-3 px-4 text-red-500 hover:bg-gray-100"
-                                                            data-hs-overlay="#hs-slide-up-animation-modal"
-                                                            @click="
-                                                                enterpriseToDecline =
-                                                                    enterprise.id
-                                                            "
-                                                            :disabled="
-                                                                enterprise.status !==
-                                                                'Pending'
-                                                            "
-                                                        >
-                                                            Decline
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                                <font-awesome-icon
+                                                    icon="fa-solid fa-eye"
+                                                />
                                             </div>
                                         </td>
                                     </tr>
